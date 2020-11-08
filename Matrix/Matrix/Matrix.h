@@ -31,6 +31,8 @@ public:
 
 	Matrix operator*(const Matrix& other) const;
 
+	Matrix operator*(const double& scalar) const;
+
 	bool operator==(const Matrix& other) const;
 
 	bool operator!=(const Matrix& other) const;
@@ -51,9 +53,15 @@ public:
 	// Other Member Functions
 	Matrix transpose() const;
 
+	Matrix minor(const unsigned int& row, const unsigned int& col) const;
+
+	Matrix cofactor(const unsigned int& row, const unsigned int& col) const;
+
+	double determinant() const;
+
 	void print() const;
 
-	double& at(const int& row, const int& col);
+	double& at(const unsigned int& row, const unsigned int& col);
 
 
 
@@ -66,15 +74,17 @@ private:
 
 
 	// Private Member Functions
-	Matrix& assign(const Matrix& other);
+	void assign(const Matrix& other);
 
-	Matrix& setGrid(const std::vector<std::vector<double>> grid);
+	void setGrid(const std::vector<std::vector<double>>& grid);
 
 	Matrix plus(const Matrix& other) const;
 
 	Matrix minus(const Matrix& other) const;
 
 	Matrix times(const Matrix& other) const;
+
+	void scale(const double& scalar);
 
 	bool isEqualTo(const Matrix& other) const;
 

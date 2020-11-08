@@ -43,12 +43,16 @@ unsigned int Matrix::getCols() const
 // Overloaded Operators
 Matrix& Matrix::operator=(const Matrix& other)
 {
-	return this->assign(other);
+	this->assign(other);
+
+	return *this;
 }
 
 Matrix& Matrix::operator=(const std::vector<std::vector<double>>& grid)
 {
-	return this->setGrid(grid);
+	this->setGrid(grid);
+
+	return *this;
 }
 
 Matrix Matrix::operator+(const Matrix& other) const
@@ -64,6 +68,17 @@ Matrix Matrix::operator-(const Matrix& other) const
 Matrix Matrix::operator*(const Matrix& other) const
 {
 	return this->times(other);
+}
+
+Matrix Matrix::operator*(const double& scalar) const
+{
+	Matrix result(m_Rows, m_Cols);
+
+	result.assign(*this);
+
+	result.scale(scalar);
+
+	return result;
 }
 
 bool Matrix::operator==(const Matrix& other) const
@@ -116,6 +131,33 @@ Matrix Matrix::transpose() const
 	return result;
 }
 
+Matrix Matrix::minor(const unsigned int& row, const unsigned int& col) const
+{
+	Matrix result(m_Rows - 1, m_Cols - 1);
+
+
+
+	return result;
+}
+
+Matrix Matrix::cofactor(const unsigned int& row, const unsigned int& col) const
+{
+	Matrix result(m_Rows - 1, m_Cols - 1);
+
+	
+
+	return result;
+}
+
+double Matrix::determinant() const
+{
+	double result = 0.0;
+
+
+
+	return result;
+}
+
 void Matrix::print() const
 {
 	if (this->isNull())
@@ -134,7 +176,7 @@ void Matrix::print() const
 	}
 }
 
-double& Matrix::at(const int& row, const int& col)
+double& Matrix::at(const unsigned int& row, const unsigned int& col)
 {
 	return m_Grid[row][col];
 }
@@ -142,7 +184,7 @@ double& Matrix::at(const int& row, const int& col)
 
 
 // Private Member Functions
-Matrix& Matrix::assign(const Matrix& other)
+void Matrix::assign(const Matrix& other)
 {
 	m_Rows = other.m_Rows;
 	m_Cols = other.m_Cols;
@@ -153,10 +195,9 @@ Matrix& Matrix::assign(const Matrix& other)
 		for (unsigned int j = 0; j < m_Cols; j++)
 			m_Grid[i][j] = other.m_Grid[i][j];
 
-	return *this;
 }
 
-Matrix& Matrix::setGrid(const std::vector<std::vector<double>> grid)
+void Matrix::setGrid(const std::vector<std::vector<double>>& grid)
 {
 	m_Rows = grid.size();
 	m_Cols = grid[0].size();
@@ -167,7 +208,6 @@ Matrix& Matrix::setGrid(const std::vector<std::vector<double>> grid)
 		for (unsigned int j = 0; j < m_Cols; j++)
 			m_Grid[i][j] = grid[i][j];
 
-	return *this;
 }
 
 Matrix Matrix::plus(const Matrix& other) const
@@ -238,6 +278,13 @@ Matrix Matrix::times(const Matrix& other) const
 
 		return Matrix();
 	}
+}
+
+void Matrix::scale(const double& scalar)
+{
+	for (unsigned int i = 0; i < m_Rows; i++)
+		for (unsigned int j = 0; j < m_Cols; j++)
+			this->at(i, j) *= scalar;
 }
 
 bool Matrix::isEqualTo(const Matrix& other) const
