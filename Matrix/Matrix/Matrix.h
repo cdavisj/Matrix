@@ -61,6 +61,8 @@ public:
 
 	void print() const;
 
+	double at(const unsigned int& row, const unsigned int& col) const;
+	
 	double& at(const unsigned int& row, const unsigned int& col);
 
 

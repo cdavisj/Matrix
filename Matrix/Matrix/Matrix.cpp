@@ -135,7 +135,27 @@ Matrix Matrix::minor(const unsigned int& row, const unsigned int& col) const
 {
 	Matrix result(m_Rows - 1, m_Cols - 1);
 
+	unsigned int i;
+	unsigned int j;
+	unsigned int k;
+	unsigned int l;
 
+	for (i = 0, k = 0; i < m_Rows; i++)
+	{
+		
+		for (j = 0, l = 0; j < m_Cols; j++)
+		{
+			if (i != row && j != col)
+			{
+				result.at(k, l) = this->at(i, j);
+
+				l++;
+			}
+		}
+
+		if (i != row && j != col)
+			k++;
+	}
 
 	return result;
 }
@@ -144,18 +164,38 @@ Matrix Matrix::cofactor(const unsigned int& row, const unsigned int& col) const
 {
 	Matrix result(m_Rows - 1, m_Cols - 1);
 
-	
+	result = this->minor(row, col);
+
+	result.scale(pow(-1, row + col));
 
 	return result;
 }
 
 double Matrix::determinant() const
 {
-	double result = 0.0;
+	if (this->isSquare())
+	{
+		unsigned int n = m_Rows;
+
+		if (n == 1)
+			return this->at(0, 0);
+		else if (n == 2)
+			return this->at(0, 0) * this->at(1, 1) - this->at(0, 1) * this->at(1, 0);
+		else
+		{
+			double result = 0.0;
 
 
 
-	return result;
+			return result;
+		}
+	}
+	else
+	{
+		printf("Error: matrix must be square");
+
+		return 0.0;
+	}
 }
 
 void Matrix::print() const
@@ -169,11 +209,16 @@ void Matrix::print() const
 		for (unsigned int i = 0; i < m_Rows; i++)
 		{
 			for (unsigned int j = 0; j < m_Cols; j++)
-				printf("%.0f ", m_Grid[i][j]);
+				printf("%.0f ", this->at(i, j));
 
 			printf("\n");
 		}
 	}
+}
+
+double Matrix::at(const unsigned int& row, const unsigned int& col) const
+{
+	return m_Grid[row][col];
 }
 
 double& Matrix::at(const unsigned int& row, const unsigned int& col)
@@ -193,7 +238,7 @@ void Matrix::assign(const Matrix& other)
 
 	for (unsigned int i = 0; i < m_Rows; i++)
 		for (unsigned int j = 0; j < m_Cols; j++)
-			m_Grid[i][j] = other.m_Grid[i][j];
+			this->at(i, j) = other.at(i, j);
 
 }
 
@@ -206,7 +251,7 @@ void Matrix::setGrid(const std::vector<std::vector<double>>& grid)
 
 	for (unsigned int i = 0; i < m_Rows; i++)
 		for (unsigned int j = 0; j < m_Cols; j++)
-			m_Grid[i][j] = grid[i][j];
+			this->at(i, j) = grid[i][j];
 
 }
 
@@ -218,7 +263,7 @@ Matrix Matrix::plus(const Matrix& other) const
 
 		for (unsigned int i = 0; i < m_Rows; i++)
 			for (unsigned int j = 0; j < m_Cols; j++)
-				result.m_Grid[i][j] = m_Grid[i][j] + other.m_Grid[i][j];
+				result.at(i, j) = this->at(i, j) + other.at(i, j);
 
 		return result;
 	}
@@ -238,7 +283,7 @@ Matrix Matrix::minus(const Matrix& other) const
 
 		for (unsigned int i = 0; i < m_Rows; i++)
 			for (unsigned int j = 0; j < m_Cols; j++)
-				result.m_Grid[i][j] = m_Grid[i][j] - other.m_Grid[i][j];
+				result.at(i, j) = this->at(i, j) - other.at(i, j);
 
 		return result;
 	}
@@ -263,9 +308,9 @@ Matrix Matrix::times(const Matrix& other) const
 			for (unsigned int j = 0; j < other.m_Cols; j++)
 			{
 				for (unsigned int k = 0; k < other.m_Rows; k++)
-					element += m_Grid[i][k] * other.m_Grid[k][j];
+					element += this->at(i, j) * other.at(i, j);
 
-				result.m_Grid[i][j] = element;
+				result.at(i, j) = element;
 				element = 0;
 			}
 		}
@@ -294,7 +339,7 @@ bool Matrix::isEqualTo(const Matrix& other) const
 		for (unsigned int i = 0; i < m_Rows; i++)
 		{
 			for (unsigned int j = 0; j < m_Cols; j++)
-				if (m_Grid[i][j] != other.m_Grid[i][j])
+				if (this->at(i, j) != other.at(i, j))
 					return false;
 		}
 		return true;
@@ -310,7 +355,7 @@ bool Matrix::isNotEqualTo(const Matrix& other) const
 		for (unsigned int i = 0; i < m_Rows; i++)
 		{
 			for (unsigned int j = 0; j < m_Cols; j++)
-				if (m_Grid[i][j] != other.m_Grid[i][j])
+				if (this->at(i, j) != other.at(i, j))
 					return true;
 		}
 		return false;

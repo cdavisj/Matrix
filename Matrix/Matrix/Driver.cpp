@@ -6,15 +6,17 @@
 
 int main()
 {
-	Matrix m1({
+	Matrix m({
 		{ 1, 2, 3 },
 		{ 4, 5, 6 },
 		{ 7, 8, 9 }
 	});
 
-	Matrix m2 = m1 * -1;
-	m1.print();
-	m2.print();
+	double det;
+
+	det = m.determinant();
+
+	printf("%.0f", det);
 
 	std::cin.get();
 	return 0;
