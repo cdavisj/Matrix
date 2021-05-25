@@ -55,7 +55,7 @@ public:
 
 	Matrix minor(const unsigned int& row, const unsigned int& col) const;
 
-	Matrix cofactor(const unsigned int& row, const unsigned int& col) const;
+	double cofactor(const unsigned int& row, const unsigned int& col) const;
 
 	double determinant() const;
 

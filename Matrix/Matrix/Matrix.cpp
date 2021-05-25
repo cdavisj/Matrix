@@ -142,7 +142,7 @@ Matrix Matrix::minor(const unsigned int& row, const unsigned int& col) const
 
 	for (i = 0, k = 0; i < m_Rows; i++)
 	{
-		
+
 		for (j = 0, l = 0; j < m_Cols; j++)
 		{
 			if (i != row && j != col)
@@ -160,13 +160,15 @@ Matrix Matrix::minor(const unsigned int& row, const unsigned int& col) const
 	return result;
 }
 
-Matrix Matrix::cofactor(const unsigned int& row, const unsigned int& col) const
+double Matrix::cofactor(const unsigned int& row, const unsigned int& col) const
 {
-	Matrix result(m_Rows - 1, m_Cols - 1);
+	Matrix min(m_Rows - 1, m_Cols - 1);
 
-	result = this->minor(row, col);
+	min = this->minor(row, col);
 
-	result.scale(pow(-1, row + col));
+	double result = 0;
+
+	result=min.determinant()*pow(-1, row + col);
 
 	return result;
 }
@@ -184,9 +186,9 @@ double Matrix::determinant() const
 		else
 		{
 			double result = 0.0;
-
-
-
+			for (int i = 0; i < n; i++) {
+				result += this->cofactor(i, 0)*this->at(i,0);
+			}
 			return result;
 		}
 	}
