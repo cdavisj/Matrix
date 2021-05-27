@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CONSOLE_H
+#define CONSOLE_H
 
 namespace console
 {
@@ -8,3 +9,5 @@ namespace console
 
 	void clearScreen();
 }
+
+#endif

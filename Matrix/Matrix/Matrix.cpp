@@ -2,20 +2,24 @@
 
 #include <iostream>
 
-// Constructors
+/*
+*   ---------------------------------------------
+*   |               CONSTRUCTORS                |
+*   ---------------------------------------------
+*/
 Matrix::Matrix()
 	: m_Rows(1), m_Cols(1)
 {
 	m_Grid.resize(m_Rows, std::vector<double>(m_Cols));
 }
 
-Matrix::Matrix(int rows, int cols, double val)
+Matrix::Matrix(const unsigned int& rows, const unsigned int& cols, const double& val)
 	: m_Rows(rows), m_Cols(cols)
 {
 	m_Grid.resize(m_Rows, std::vector<double>(m_Cols, val));
 }
 
-Matrix::Matrix(std::vector<std::vector<double>> grid)
+Matrix::Matrix(const std::vector<std::vector<double>>& grid)
 	: m_Rows(grid.size()), m_Cols(grid[0].size())
 {
 	m_Grid.resize(m_Rows, std::vector<double>(m_Cols));
@@ -27,7 +31,11 @@ Matrix::Matrix(std::vector<std::vector<double>> grid)
 
 
 
-// Getters (Accessors)
+/*
+*   ---------------------------------------------
+*   |            ACCESSORS (GETTERS)            |
+*   ---------------------------------------------
+*/
 unsigned int Matrix::getRows() const
 {
 	return m_Rows;
@@ -40,7 +48,11 @@ unsigned int Matrix::getCols() const
 
 
 
-// Overloaded Operators
+/*
+*   ---------------------------------------------
+*   |            OVERLOADED OPERATORS           |
+*   ---------------------------------------------
+*/
 Matrix& Matrix::operator=(const Matrix& other)
 {
 	this->assign(other);
@@ -91,9 +103,61 @@ bool Matrix::operator!=(const Matrix& other) const
 	return this->isNotEqualTo(other);
 }
 
+std::ostream& operator<<(std::ostream& output, const Matrix& matrix)
+{
+	if (matrix.isNull())
+	{
+		output << "null";
+	}
+	else
+	{
+		for (unsigned int i = 0; i < matrix.m_Rows; i++)
+		{
+			for (unsigned int j = 0; j < matrix.m_Cols; j++)
+				output << matrix.at(i, j) << " ";
+
+			output << std::endl;
+		}
+	}
+
+	return output;
+}
+
+double Matrix::operator()(const unsigned int& row, const unsigned int& col) const
+{
+	if (this->hasRowIndex(row) && this->hasColIndex(col))
+		return this->m_Grid[row][col];
+	else
+	{
+		// NEED EXCEPTIONS HERE
+		printf("Error: invalid row-column combination\n");
+
+		return -1;
+	}
+}
+
+double& Matrix::operator()(const unsigned int& row, const unsigned int& col)
+{
+	if (this->hasRowIndex(row) && this->hasColIndex(col))
+		return this->m_Grid[row][col];
+	else
+	{
+		// NEED EXCEPTIONS HERE
+		printf("Error: invalid row-column combination\n");
+
+		double err = -1;
+
+		return err;
+	}
+}
 
 
-// Boolean Member Functions
+
+/*
+*   ---------------------------------------------
+*   |              BOOLEAN METHODS              |
+*   ---------------------------------------------
+*/
 bool Matrix::isSquare() const
 {
 	return m_Rows == m_Cols;
@@ -119,7 +183,11 @@ bool Matrix::isNull() const
 
 
 
-// Other Member Functions
+/*
+*   ---------------------------------------------
+*   |               OTHER METHODS               |
+*   ---------------------------------------------
+*/
 Matrix Matrix::transpose() const
 {
 	Matrix result(m_Cols, m_Rows);
@@ -133,44 +201,56 @@ Matrix Matrix::transpose() const
 
 Matrix Matrix::minor(const unsigned int& row, const unsigned int& col) const
 {
-	Matrix result(m_Rows - 1, m_Cols - 1);
-
-	unsigned int i;
-	unsigned int j;
-	unsigned int k;
-	unsigned int l;
-
-	for (i = 0, k = 0; i < m_Rows; i++)
+	if (this->hasRowIndex(row) && this->hasColIndex(col))
 	{
+		Matrix result(m_Rows - 1, m_Cols - 1);
 
-		for (j = 0, l = 0; j < m_Cols; j++)
+		unsigned int i, j, k, l;
+
+		for (i = 0, k = 0; i < m_Rows; i++)
 		{
-			if (i != row && j != col)
+			for (j = 0, l = 0; j < m_Cols; j++)
 			{
-				result.at(k, l) = this->at(i, j);
+				if (i != row && j != col)
+				{
+					result.at(k, l) = this->at(i, j);
 
-				l++;
+					l++;
+				}
 			}
+
+			if (i != row && j != col)
+				k++;
 		}
 
-		if (i != row && j != col)
-			k++;
+		return result;
 	}
+	else
+	{
+		// NEED EXCEPTIONS HERE
+		printf("Error: invalid row-column combination\n");
 
-	return result;
+		return Matrix();
+	}
 }
 
 double Matrix::cofactor(const unsigned int& row, const unsigned int& col) const
 {
-	Matrix min(m_Rows - 1, m_Cols - 1);
+	if (this->hasRowIndex(row) && this->hasColIndex(col))
+	{
+		Matrix min(m_Rows - 1, m_Cols - 1);
 
-	min = this->minor(row, col);
+		min = this->minor(row, col);
 
-	double result = 0;
+		return min.determinant() * pow(-1, row + col);
+	}
+	else
+	{
+		// NEED EXCEPTIONS HERE
+		printf("Error: invalid row-column combination\n");
 
-	result=min.determinant()*pow(-1, row + col);
-
-	return result;
+		return -1;
+	}
 }
 
 double Matrix::determinant() const
@@ -186,17 +266,19 @@ double Matrix::determinant() const
 		else
 		{
 			double result = 0.0;
-			for (int i = 0; i < n; i++) {
-				result += this->cofactor(i, 0)*this->at(i,0);
-			}
+			
+			for (unsigned int i = 0; i < n; i++)
+				result += this->cofactor(i, 0) * this->at(i, 0);
+
 			return result;
 		}
 	}
 	else
 	{
+		// NEED EXCEPTIONS HERE
 		printf("Error: matrix must be square");
 
-		return 0.0;
+		return -1;
 	}
 }
 
@@ -211,7 +293,7 @@ void Matrix::print() const
 		for (unsigned int i = 0; i < m_Rows; i++)
 		{
 			for (unsigned int j = 0; j < m_Cols; j++)
-				printf("%.0f ", this->at(i, j));
+				printf("%g ", this->at(i, j));
 
 			printf("\n");
 		}
@@ -220,23 +302,45 @@ void Matrix::print() const
 
 double Matrix::at(const unsigned int& row, const unsigned int& col) const
 {
-	return m_Grid[row][col];
+	if (this->hasRowIndex(row) && this->hasColIndex(col))
+		return m_Grid[row][col];
+	else
+	{
+		// NEED EXCEPTIONS HERE
+		printf("Error: invalid row-column combination\n");
+
+		return -1;
+	}
 }
 
 double& Matrix::at(const unsigned int& row, const unsigned int& col)
 {
-	return m_Grid[row][col];
+	if (this->hasRowIndex(row) && this->hasColIndex(col))
+		return m_Grid[row][col];
+	else
+	{
+		// NEED EXCEPTIONS HERE
+		printf("Error: invalid row-column combination\n");
+
+		double err = -1;
+
+		return err;
+	}
 }
 
 
 
-// Private Member Functions
+/*
+*   ---------------------------------------------
+*   |              PRIVATE METHODS              |
+*   ---------------------------------------------
+*/
 void Matrix::assign(const Matrix& other)
 {
 	m_Rows = other.m_Rows;
 	m_Cols = other.m_Cols;
 
-	m_Grid = std::vector<std::vector<double>>(m_Rows, std::vector<double>(m_Cols));
+	m_Grid.resize(m_Rows, std::vector<double>(m_Cols));
 
 	for (unsigned int i = 0; i < m_Rows; i++)
 		for (unsigned int j = 0; j < m_Cols; j++)
@@ -249,7 +353,7 @@ void Matrix::setGrid(const std::vector<std::vector<double>>& grid)
 	m_Rows = grid.size();
 	m_Cols = grid[0].size();
 
-	m_Grid = std::vector<std::vector<double>>(m_Rows, std::vector<double>(m_Cols));
+	m_Grid.resize(m_Rows, std::vector<double>(m_Cols));
 
 	for (unsigned int i = 0; i < m_Rows; i++)
 		for (unsigned int j = 0; j < m_Cols; j++)
@@ -271,6 +375,7 @@ Matrix Matrix::plus(const Matrix& other) const
 	}
 	else
 	{
+		// NEED EXCEPTIONS HERE
 		printf("Error: Dimensions do not match.");
 
 		return Matrix();
@@ -291,6 +396,7 @@ Matrix Matrix::minus(const Matrix& other) const
 	}
 	else
 	{
+		// NEED EXCEPTIONS HERE
 		printf("Error: Dimensions do not match.");
 
 		return Matrix();
@@ -321,7 +427,8 @@ Matrix Matrix::times(const Matrix& other) const
 	}
 	else
 	{
-		printf("Error: Matrices can not multiply.");
+		// NEED EXCEPTIONS HERE
+		printf("Error: Matrices cannot multiply.");
 
 		return Matrix();
 	}
@@ -364,4 +471,14 @@ bool Matrix::isNotEqualTo(const Matrix& other) const
 	}
 	else
 		return true;
+}
+
+bool Matrix::hasRowIndex(const unsigned int& row) const
+{
+	return row >= 0 && row < m_Rows;
+}
+
+bool Matrix::hasColIndex(const unsigned int& col) const
+{
+	return col >= 0 && col < m_Cols;
 }

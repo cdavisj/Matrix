@@ -1,4 +1,20 @@
-#pragma once
+
+/*
+* File: Matrix.h
+*
+* Authors: Caleb Davis, Grant Fisher, Aidan Hart, Taxminion
+*
+* Date: 10-05-20
+*
+* Description:
+*   Class implementation for a mathematical matrix.
+*
+*/
+
+#ifndef MATRIX_H
+#define MATRIX_H
+
+#include <iostream>
 #include <vector>
 
 class Matrix
@@ -7,20 +23,20 @@ public:
 	// Constructors
 	Matrix();
 
-	Matrix(int rows, int cols, double val = 0);
+	Matrix(const unsigned int& rows, const unsigned int& cols, const double& val = 0);
 
-	Matrix(std::vector<std::vector<double>> grid);
+	Matrix(const std::vector<std::vector<double>>& grid);
 
 
 
-	// Getters (Accessors)
+	// Accessors (Getters)
 	unsigned int getRows() const;
 
 	unsigned int getCols() const;
 
 
 
-	// Overloaded Operator
+	// Overloaded Operators
 	Matrix& operator=(const Matrix& other);
 
 	Matrix& operator=(const std::vector<std::vector<double>>& grid);
@@ -37,9 +53,15 @@ public:
 
 	bool operator!=(const Matrix& other) const;
 
+	friend std::ostream& operator<<(std::ostream& output, const Matrix& matrix);
+
+	double operator()(const unsigned int& row, const unsigned int& col) const;
+
+	double& operator()(const unsigned int& row, const unsigned int& col);
 
 
-	// Boolean Member Functions
+
+	// Boolean Methods
 	bool isSquare() const;
 
 	bool canMultiplyBy(const Matrix& other) const;
@@ -50,7 +72,7 @@ public:
 
 
 
-	// Other Member Functions
+	// Other Methods
 	Matrix transpose() const;
 
 	Matrix minor(const unsigned int& row, const unsigned int& col) const;
@@ -68,14 +90,7 @@ public:
 
 
 private:
-	unsigned int m_Rows;
-	unsigned int m_Cols;
-
-	std::vector<std::vector<double>> m_Grid;
-
-
-
-	// Private Member Functions
+	// Private Methods
 	void assign(const Matrix& other);
 
 	void setGrid(const std::vector<std::vector<double>>& grid);
@@ -92,4 +107,19 @@ private:
 
 	bool isNotEqualTo(const Matrix& other) const;
 
+	bool hasRowIndex(const unsigned int& row) const;
+
+	bool hasColIndex(const unsigned int& col) const;
+
+
+
+private:
+	// Private Member Variables
+	unsigned int m_Rows;
+	unsigned int m_Cols;
+
+	std::vector<std::vector<double>> m_Grid;
+
 };
+
+#endif
